@@ -1,28 +1,20 @@
 <?php
-// Połączenie z bazą danych
-$host = "localhost";
-$dbname = "moja_baza";
-$username = "root";
-$password = "aaa";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Połączenie z bazą danych
+    include 'connect.php';
 
-try {
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Błąd połączenia z bazą danych: " . $e->getMessage());
-}
+    // Pobieranie danych z formularza
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
 
-// Pobieranie danych z tabeli
-$sql = "SELECT * FROM uzytkownicy";
-$stmt = $conn->prepare($sql);
-$stmt->execute();
-$uzytkownicy = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Przygotowanie zapytania SQL
+    $sql = "INSERT INTO users (first_name, last_name, email) VALUES (:first_name, :last_name, :email)";
+    $stmt = $pdo->prepare($sql);
 
-// Wyświetlanie danych
-foreach ($uzytkownicy as $uzytkownik) {
-    echo "ID: " . $uzytkownik['id'] . "<br>";
-    echo "Imię: " . $uzytkownik['imie'] . "<br>";
-    echo "Email: " . $uzytkownik['email'] . "<br>";
-    echo "Wiek: " . $uzytkownik['wiek'] . "<br><br>";
+    // Powiązanie parametrów i wykonanie zapytania
+    $stmt->execute(['first_name' => $first_name, 'last_name' => $last_name, 'email' => $email]);
+
+    echo "Dane zostały zapisane!";
 }
 ?>
